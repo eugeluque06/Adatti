@@ -22,7 +22,7 @@ const AppContainer = createAppContainer(AppNavigator);
 
 // Define el componente principal de la aplicación
 const App = () => {
-  return <AppContainer />;
+  return <RootNavigation />;
 };
 
 export default App;
