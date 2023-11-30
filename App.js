@@ -1,28 +1,13 @@
-import React from 'react';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import HomeScreen from './screens/HomeScreen';
-import BarcodeScanner from './screens/BarcodeScanner';
-import SearchBar from './screens/SearchBar';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Button, Text, View } from 'react-native';
+import {
+  useNavigation,
+} from "@react-navigation/native";
 
-// Configura la navegación
-const AppNavigator = createStackNavigator(
-  {
-    Home: HomeScreen,
-    BarcodeScanner: BarcodeScanner,
-    Search: SearchBar,
-  },
-  {
-    initialRouteName: 'Home',
-  }
-);
+import  AppNavigation  from './src/navigation/AppNavigator';
+export default function App() {
+ 
 
-// Crea el contenedor de la aplicación
-const AppContainer = createAppContainer(AppNavigator);
+  return <AppNavigation />;
 
-// Define el componente principal de la aplicación
-const App = () => {
-  return <RootNavigation />;
 };
-
-export default App;
