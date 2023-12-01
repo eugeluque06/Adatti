@@ -1,21 +1,89 @@
-import React from 'react';
-import { View, Text, Button } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, Button } from 'react-native';
+import { BarCodeScanner } from 'expo-barcode-scanner';
+import axios from 'axios';
 
-  const BarcodeScanner = ({ navigation}) => {
-  // Lógica del lector de códigos de barras
+export default function App() {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [text, setText] = useState('Not yet scanned')
+  const url = 'https://6560d16283aba11d99d190e2.mockapi.io/:endpoint';
 
+  const askForCameraPermission = () => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })()
+  }
+
+  // Request Camera Permission
+  useEffect(() => {
+    askForCameraPermission();
+  }, []);
+
+  // What happens when we scan the bar code
+  const handleBarCodeScanned = async ({ type, data }) => {
+    setScanned(true);
+    setText(data)
+    console.log('Type: ' + type + 'Data: ' + data)
+    try {const respuesta = await axios.post(url, data);
+    console.log('Respuesta de la API:', respuesta.data);
+    } catch (error) {
+    // Maneja los errores de la API según tus necesidades
+    console.error('Error al enviar datos a la API:', error);
+  }
+  };
+
+  // Check permissions and return the screens
+  if (hasPermission === null) {
+    return (
+      <View style={styles.container}>
+        <Text>Requesting for camera permission</Text>
+      </View>)
+  }
+  if (hasPermission === false) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ margin: 10 }}>No access to camera</Text>
+        <Button title={'Allow Camera'} onPress={() => askForCameraPermission()} />
+        
+      </View>)
+  }
+
+  // Return the View
   return (
-    <View>
-      <Text>Lector de Códigos de Barras</Text>
-      {/* Puedes agregar aquí la lógica del lector de códigos de barras */}
+    <View style={styles.container}>
+      <View style={styles.barcodebox}>
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={{ height: 400, width: 400 }} />
+      </View>
+      <Text style={styles.maintext}>{text}</Text>
 
-      <Button
-        title="Volver a Inicio"
-        onPress={() => navigation.navigate('Home')}
-      />
+      {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
+   
     </View>
   );
-};
+}
 
-export default BarcodeScanner;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  maintext: {
+    fontSize: 16,
+    margin: 20,
+  },
+  barcodebox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 300,
+    width: 300,
+    overflow: 'hidden',
+    borderRadius: 30,
+    backgroundColor: 'tomato'
+  }
+});
