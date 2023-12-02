@@ -7,8 +7,7 @@ export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [text, setText] = useState('Not yet scanned')
-  const url = 'https://6560d16283aba11d99d190e2.mockapi.io/:endpoint';
-
+  const url = 'https://6560d16283aba11d99d190e2.mockapi.io';
   const askForCameraPermission = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -23,15 +22,26 @@ export default function App() {
 
   // What happens when we scan the bar code
   const handleBarCodeScanned = async ({ type, data }) => {
-    setScanned(true);
+    setScanned(true)
     setText(data)
-    console.log('Type: ' + type + 'Data: ' + data)
-    try {const respuesta = await axios.post(url, data);
-    console.log('Respuesta de la API:', respuesta.data);
-    } catch (error) {
-    // Maneja los errores de la API según tus necesidades
-    console.error('Error al enviar datos a la API:', error);
-  }
+    fetch(`${url}/alimentos?codigoDeBarras=${data}`)
+    .then(response => {
+      // Verifica si la solicitud fue exitosa (código de estado 200)
+      if (!response.ok) {
+        throw new Error(`Error al realizar la solicitud: ${response.status}`);
+      }
+      // Parsea la respuesta como JSON
+      return response.json();
+    })
+    .then(data => {
+      // Maneja los datos de la respuesta
+      console.log('Datos de productos:', data);
+      alert(`el producto se encuentra en el listado`);
+    })
+    .catch(error => {
+      // Maneja los errores de la solicitud
+      console.error('Error al obtener productos:', error);
+    });
   };
 
   // Check permissions and return the screens
@@ -53,16 +63,15 @@ export default function App() {
   // Return the View
   return (
     <View style={styles.container}>
-      <View style={styles.barcodebox}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ height: 400, width: 400 }} />
-      </View>
-      <Text style={styles.maintext}>{text}</Text>
-
-      {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
-   
+    <View style={styles.barcodebox}>
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={{ height: 400, width: 400 }} />
     </View>
+    <Text style={styles.maintext}>{text}</Text>
+
+    {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
+  </View>
   );
 }
 
