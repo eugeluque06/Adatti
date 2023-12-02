@@ -37,6 +37,7 @@ export default function App() {
       // Maneja los datos de la respuesta
       console.log('Datos de productos:', data);
       alert(`el producto se encuentra en el listado`);
+      
     })
     .catch(error => {
       // Maneja los errores de la solicitud
