@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "250261779362",
+    "project_id": "adatti-2646b",
+    "storage_bucket": "adatti-2646b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250261779362:android:2e00859ca431cb6a2df8fb",
+        "android_client_info": {
+          "package_name": "expo.android.package"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBum1UiPUOWhoUyj6qDPdHtlf8bAaX-PpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
